@@ -1,11 +1,11 @@
 package galileo.linalg
 
 // Linear algebra stuff, matrices and vectors
-import galileo.expr._
 import galileo.environment._
+import galileo.expr._
 import galileo.selectable.Selectable
 
-import scala.collection.mutable.{ListBuffer}
+import scala.collection.mutable.ListBuffer
 
 trait Matrix extends Expr with Selectable {
 	val numRows:Int
@@ -644,6 +644,23 @@ case class DenseMatrix( rows:List[List[Expr]]) extends Expr with Matrix {
 		)
 	}
 
+	// find row with max abs value if formula inf
+	private def selectPivot(rs: List[List[Expr]], start: Int): Int = {
+		var pi = start
+		var pv = math.abs(rs(0)(0).simplify.doubleValue)
+		for (p <- start + 1 until this.numRows) {
+			var cur = 0.0
+			if (rs(p - start)(0).simplify.eval() match {
+				case Number(x) => cur = x; x > pv
+				case _ => true
+			}) {
+				pi = p
+				pv = cur
+			}
+		}
+		pi
+	}
+
 	// Helper for LU factorization
 	lazy val _lup = {
 		var lc:List[List[Expr]] = Nil // List of list of expr, cols of L
@@ -655,16 +672,7 @@ case class DenseMatrix( rows:List[List[Expr]]) extends Expr with Matrix {
 		
 		for( i <- 0 until this.numRows )
 		{
-			// find row with max abs value
-			var pi = i // pivot index
-			
-			var pv = math.abs( rs(0)(0).doubleValue )
-			for( p <- i + 1  until this.numRows ) {
-				if( math.abs( rs(p-i)(0).doubleValue ) > pv ) {
-					pi = p; 
-					pv = rs(p-i)(0).doubleValue
-				}
-			}
+			val pi = selectPivot(rs, i)
 			
 			ps(i)=pi // these are the indices to use later on, to build the external facing P matrix
 			// move elements in rs around
