@@ -37,7 +37,7 @@ case class Load(filename:String) extends Expr {
 	
 
 	override def visit( env:Option[Environment] ) = {
-		var p = new Parser()
+		val p = new Parser()
 		//var h = new ExprHandler()
 		
 		//import parser.NoSuccess // this does not compile... argh
@@ -46,7 +46,7 @@ case class Load(filename:String) extends Expr {
 		val contents = Source.fromFile(filename).getLines.mkString
 		// parse this (or should we send the contents to the command window?)
 		p.parse( contents ) match {
-			case p.Success(expressions,_) => { 
+			case p.Success(expressions: List[Expr],_) => {
 				/*env match { // Handle the expressions }
 					case Some( e ) => h.eval( e, ExprArray( expressions:_* ) ) //.foreach( expression => h.eval( e, expression ) )
 					case None => h.eval( new Environment( None ), ExprArray( expressions:_* ) )

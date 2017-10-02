@@ -2,16 +2,14 @@ organization := "scala"
 
 name := "Galileo"
 
-version := "1.0"
+version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.12.2"
 
 scalacOptions ++= Seq( "-deprecation", "-feature" )
 
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
-
-libraryDependencies += "org.scala-lang" % "jline" % "2.9.0-1"
-
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+libraryDependencies += "org.scala-lang.modules" % "scala-jline" % "2.12.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6"
 
 
